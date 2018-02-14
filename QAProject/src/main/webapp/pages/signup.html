@@ -42,6 +42,12 @@
 } */
 
 </style>
+<div class="alert alert-danger" ng-hide="signuperror">
+ <span>{{message}}</span>
+</div>
+<div class="alert alert-success" ng-show="signupsuccess">
+ <span>{{message}}</span>
+</div>
 <form class="form-signin">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
