@@ -57,7 +57,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 }]);
 
-app.controller('signupCntrl',['$scope','$http','$firebaseAuth',function($scope,$http,$firebaseAuth){
+app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location',function($scope,$http,$firebaseAuth,$location){
 	
 	
 	$scope.createAccount=function()
