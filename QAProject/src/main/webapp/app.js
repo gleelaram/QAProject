@@ -41,6 +41,19 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		
 	};
 	
+	$scope.addQA=function(){
+		
+		console.log($scope.QAF);
+		$scope.questionList.$add($scope.QAF).then(function(ref) {
+		  var id = ref.key;
+		  console.log("added record with id " + id);
+		});
+	};
+	
+	$scope.dummy=function()
+	{
+		console.log("Hai in modal");
+	};
 	
 }]);
 
