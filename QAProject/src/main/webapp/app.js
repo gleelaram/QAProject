@@ -23,9 +23,22 @@ app.config(function($routeProvider){
 
 
 
-app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth){
+app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q){
 	
 	
+	/*$scope.$watchGroup(['Company', 'skill'], function(newVal, oldVal) { 
+		
+		if(newVal[0]=="")
+			{
+			$scope.Company=undefined;
+			}
+		if(newVal[1]=="")
+		{
+		$scope.skill=undefined;
+		}
+	});*/
+	
+	$scope.errorflag=false;
 	
 	var db = firebase.database().ref().child('QA');
 	$scope.questionList=$firebaseArray(db);
@@ -43,12 +56,119 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.addQA=function(){
 		
-		console.log($scope.QAF);
-		$scope.questionList.$add($scope.QAF).then(function(ref) {
-		  var id = ref.key;
-		  console.log("added record with id " + id);
-		});
+		//console.log($scope.QAF.company);
+		
+		if($scope.QAF==undefined)
+			{
+			 $scope.errorMsg="Please provide the mandatory fileds";
+			 $scope.errorflag=true;
+			 $("#QAModal").modal("show");
+			 return;
+			}
+		
+		if($scope.QAF.company==undefined)
+		{
+		$scope.QAF.company="";
+		}
+	
+	if($scope.QAF.skill==undefined)
+	{
+	$scope.QAF.skill="";
+	}
+		
+		if($scope.QAF==undefined||$scope.QAF.question==undefined)
+		{
+			 $scope.errorMsg="Please provide the mandatory fileds";
+			 $scope.errorflag=true;
+			 $("#QAModal").modal("show");
+		}else{
+			 $("#QAModal").modal("hide");
+			 $scope.errorflag=false;
+			 $scope.errorMsg="";
+			console.log($scope.QAF);
+			$scope.questionList.$add($scope.QAF).then(function(ref) {
+			  var id = ref.key;
+			  console.log("added record with id " + id);
+			});
+			
+		}
+		
+	
+		
+	
 	};
+	
+	$scope.upload=function(){
+		
+		readDataFromExcel().then(function(data){
+			$("#QAMModal").modal("hide");
+			console.log(data);
+			for(var i=0;i<data.length;i++)
+			{
+			 createAddQAObject(data[i]);	 
+			}
+		});
+		
+	};
+	
+	function createAddQAObject(object)
+	{
+		if(object.company==undefined)
+		{
+			object.company="";
+		}
+		if(object.skill==undefined)
+		{
+			object.skill="";
+		}
+		$scope.questionList.$add(object).then(function(ref) {
+			  var id = ref.key;
+			  console.log("added record with id " + id);
+			});
+	}
+	
+	function readDataFromExcel()
+	{
+		var defer=$q.defer();
+		var jsonoutput;
+		 var files = document.getElementById("file-object").files;
+		  console.log(files);
+		  //var files = e.target.files,
+		  // file;
+		  if (!files || files.length === 0) return;
+		  file = files[0];
+		  //console.log(e);
+		  var fileReader = new FileReader();
+		  fileReader.onload = function(e) {
+		    console.log(e);
+		    console.log(e.target.result);
+		    var filename = file.name;
+		    // call 'xlsx' to read the file
+		    var data = new Uint8Array(e.target.result);
+		    var arr = [];
+		    for (var i = 0; i != data.length; ++i)
+		      arr[i] = String.fromCharCode(data[i]);
+		    var bstr = arr.join("");
+		    var oFile = XLSX.read(bstr, {
+		      type: "binary",
+		      cellDates: true,
+		      cellStyles: true
+		    });
+		    // console.log(oFile);
+		    oFile.SheetNames.forEach(function(sheetName) {
+		      // console.log(oFile.Sheets[sheetName]);
+		    jsonoutput = XLSX.utils.sheet_to_row_object_array(oFile.Sheets[sheetName]);
+		      //console.log(roa);
+		      
+		     
+
+		    });
+		    defer.resolve(jsonoutput);
+		  };
+
+		  fileReader.readAsArrayBuffer(file);
+		  return defer.promise;
+	}
 	
 	$scope.dummy=function()
 	{
