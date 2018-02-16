@@ -23,7 +23,7 @@ app.config(function($routeProvider){
 
 
 
-app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q){
+app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage){
 	
 	
 	/*$scope.$watchGroup(['Company', 'skill'], function(newVal, oldVal) { 
@@ -101,18 +101,46 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	$scope.upload=function(){
 		
 		readDataFromExcel().then(function(data){
+			
 			$("#QAMModal").modal("hide");
-			console.log(data);
-			for(var i=0;i<data.length;i++)
+			if(data.length!=0)
 			{
-			 createAddQAObject(data[i]);	 
+				
+				for(var i=0;i<data.length;i++)
+				{
+				 createAddQAObject(data[i]);	 
+				}
+				if($scope.count==data.length)
+					{
+				     $scope.errorMultiflag=false;
+				     $scope.successMultiflag=true;
+				     $scope.successMultiMsg="All questions added successfully";
+					}
+			}else{
+				$scope.errorMultiflag=true;
+				$scope.errorMultiMsg="No data found in the excel.";
 			}
+			
 		});
 		
 	};
 	
 	function createAddQAObject(object)
 	{
+		if(object==undefined)
+		{
+			$scope.errorMultiflag=true;
+			$scope.errorMultiMsg="No data found in the excel.";
+			return;
+		}
+		if(object.question==undefined)
+		{
+			$scope.errorMultiflag=true;
+			$scope.errorMultiMsg="Upload excel in correct format";
+			return;
+			
+		}
+		
 		if(object.company==undefined)
 		{
 			object.company="";
@@ -124,6 +152,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		$scope.questionList.$add(object).then(function(ref) {
 			  var id = ref.key;
 			  console.log("added record with id " + id);
+			  $scope.count=$scope.count+1;
 			});
 	}
 	
@@ -174,6 +203,25 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	{
 		console.log("Hai in modal");
 	};
+	
+	$scope.formatExcel=function()
+	{
+		var storageRef = firebase.storage().ref("questionsExcel.xlsx");
+	    $scope.storage = $firebaseStorage(storageRef);
+	    $scope.storage.$getDownloadURL().then(function(url) {
+	    	  $scope.url = url;
+	    	
+	    	  
+	    	  var xhr = new XMLHttpRequest();
+	    	  xhr.responseType = 'blob';
+	    	  xhr.onload = function(event) {
+	    	    var blob = xhr.response;
+	    	  };
+	    	  xhr.open('GET', url);
+	    	  xhr.send();
+	   });
+		
+	}
 	
 }]);
 
