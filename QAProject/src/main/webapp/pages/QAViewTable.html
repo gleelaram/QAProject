@@ -43,7 +43,7 @@
 <span >
   {{firebaseUser.email}} | <a href="#" ng-click="signOut()">Sign out</a>
 </span>
-  <button   class='btn btn-primary' ng-click="formatExcel()">Download Excel</button> 
+ 
  <button  data-toggle="modal" data-target="#QAMModal" class='btn btn-primary' style="float: right;">Add MultipleQuestions</button> 
  <button  data-toggle="modal" data-target="#QAModal" class='btn btn-primary' style="float: right;margin-right: 8px;" ng-click="dummy()">Add Question</button>
 <div class="modal fade" id="QAModal">
@@ -104,10 +104,18 @@
            <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
            <strong>error!</strong>{{errorMsg}}
          </div>
+         <div style="display:flex;flex-direction:row">
+             <div>
              <p>Please select an Excel file from your computer:</p>
-             <input type="file" id="file-object">   
+             <input type="file" id="file-object">  
+             </div> 
+             <div style="margin-top: 20px;margin-left: 146px;">
+             <button   class='btn btn-primary' ng-click="formatExcel()">Download Excel</button> 
+             </div>
+             </div>
         </div>
         <div class="modal-footer">
+          
           <button type="button" class="btn btn-default" ng-click='upload()'>upload</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>

@@ -100,22 +100,45 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.upload=function(){
 		
+		$scope.count=0;
 		readDataFromExcel().then(function(data){
 			
 			$("#QAMModal").modal("hide");
+			
+			if(data==undefined)
+				{
+				$scope.errorMultiflag=true;
+				$scope.errorMultiMsg="Please select excel to upload.";
+				return;
+				}
 			if(data.length!=0)
 			{
 				
 				for(var i=0;i<data.length;i++)
 				{
-				 createAddQAObject(data[i]);	 
-				}
-				if($scope.count==data.length)
-					{
-				     $scope.errorMultiflag=false;
-				     $scope.successMultiflag=true;
-				     $scope.successMultiMsg="All questions added successfully";
+				 createAddQAObject(data[i],i).then(function(ObjCre){
+					 if(ObjCre.iValue==data.length)
+					 {
+						 if($scope.count==data.length)
+							{
+						     $scope.errorMultiflag=false;
+						     $scope.successMultiflag=true;
+						     $scope.successMultiMsg="All questions added successfully";
+							}
+						else if($scope.count < data.length && $scope.count > 0 && data.length > 0 ){
+							$scope.errorMultiflag=false;
+						     $scope.successMultiflag=true;
+						     $scope.successMultiMsg="some questions added successfully,remaining rows contain empty space and no data in that row ";
+							
+						}
+						else{
+							console.log("error");
+						}
 					}
+				 });
+				}
+				
+				
 			}else{
 				$scope.errorMultiflag=true;
 				$scope.errorMultiMsg="No data found in the excel.";
@@ -125,35 +148,44 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		
 	};
 	
-	function createAddQAObject(object)
+	function createAddQAObject(object,i)
 	{
+		var iValue=(function(){return i})(i);
+		var defer=$q.defer();
 		if(object==undefined)
 		{
 			$scope.errorMultiflag=true;
 			$scope.errorMultiMsg="No data found in the excel.";
-			return;
+			defer.resolve({count:$scope.count,iValue:iValue});
+			return defer.promise;
+		
 		}
-		if(object.question==undefined)
+		if(object.question==undefined ||object.question.trim()=="")
 		{
 			$scope.errorMultiflag=true;
 			$scope.errorMultiMsg="Upload excel in correct format";
-			return;
+			defer.resolve({count:$scope.count,iValue:iValue});
+			return defer.promise;
+	
 			
 		}
 		
-		if(object.company==undefined)
+		if(object.company==undefined||object.company.trim()=="")
 		{
 			object.company="";
 		}
-		if(object.skill==undefined)
+		if(object.skill==undefined||object.skill.trim()=="")
 		{
 			object.skill="";
 		}
 		$scope.questionList.$add(object).then(function(ref) {
 			  var id = ref.key;
 			  console.log("added record with id " + id);
+			
 			  $scope.count=$scope.count+1;
+			  defer.resolve({count:$scope.count,iValue:iValue});
 			});
+		return defer.promise;
 	}
 	
 	function readDataFromExcel()
@@ -164,7 +196,11 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		  console.log(files);
 		  //var files = e.target.files,
 		  // file;
-		  if (!files || files.length === 0) return;
+		  if (!files || files.length === 0)
+			  {
+			  defer.resolve();//undefined
+			  return defer.promise;
+			  }
 		  file = files[0];
 		  //console.log(e);
 		  var fileReader = new FileReader();
@@ -210,16 +246,10 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	    $scope.storage = $firebaseStorage(storageRef);
 	    $scope.storage.$getDownloadURL().then(function(url) {
 	    	  $scope.url = url;
-	    	
-	    	  
-	    	  var xhr = new XMLHttpRequest();
-	    	  xhr.responseType = 'blob';
-	    	  xhr.onload = function(event) {
-	    	    var blob = xhr.response;
-	    	  };
-	    	  xhr.open('GET', url);
-	    	  xhr.send();
-	   });
+	    	  var aTag=document.createElement("a")
+	    	  aTag.href=url;
+	    	  aTag.click();
+         });
 		
 	}
 	
