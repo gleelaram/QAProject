@@ -97,9 +97,21 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		
 	
 	};
+	$scope.errorclose=function()
+	{
+		$scope.errorMultiflag=false;
+		$scope.errorMultiMsg="";
+	}
+	
+	$scope.successclose=function()
+	{
+		$scope.successMultiflag=false;
+		 $scope.successMultiMsg="";
+	}
 	
 	$scope.upload=function(){
-		
+		$scope.errorMultiflag=false;
+		$scope.successMultiflag=false;
 		$scope.count=0;
 		readDataFromExcel().then(function(data){
 			
@@ -117,7 +129,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 				for(var i=0;i<data.length;i++)
 				{
 				 createAddQAObject(data[i],i).then(function(ObjCre){
-					 if(ObjCre.iValue==data.length)
+					 if(ObjCre.iValue==data.length-1)
 					 {
 						 if($scope.count==data.length)
 							{
@@ -133,6 +145,9 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 						}
 						else{
 							console.log("error");
+							  $scope.errorMultiflag=true;
+							  $scope.errorMultiMsg=ObjCre.error;
+							
 						}
 					}
 				 });
@@ -156,7 +171,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		{
 			$scope.errorMultiflag=true;
 			$scope.errorMultiMsg="No data found in the excel.";
-			defer.resolve({count:$scope.count,iValue:iValue});
+			defer.resolve({count:$scope.count,iValue:iValue,error:$scope.errorMultiMsg});
 			return defer.promise;
 		
 		}
@@ -164,7 +179,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		{
 			$scope.errorMultiflag=true;
 			$scope.errorMultiMsg="Upload excel in correct format";
-			defer.resolve({count:$scope.count,iValue:iValue});
+			defer.resolve({count:$scope.count,iValue:iValue,error:$scope.errorMultiMsg});
 			return defer.promise;
 	
 			
@@ -183,7 +198,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 			  console.log("added record with id " + id);
 			
 			  $scope.count=$scope.count+1;
-			  defer.resolve({count:$scope.count,iValue:iValue});
+			  defer.resolve({count:$scope.count,iValue:iValue,error:""});
 			});
 		return defer.promise;
 	}
@@ -203,36 +218,46 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 			  }
 		  file = files[0];
 		  //console.log(e);
-		  var fileReader = new FileReader();
-		  fileReader.onload = function(e) {
-		    console.log(e);
-		    console.log(e.target.result);
-		    var filename = file.name;
-		    // call 'xlsx' to read the file
-		    var data = new Uint8Array(e.target.result);
-		    var arr = [];
-		    for (var i = 0; i != data.length; ++i)
-		      arr[i] = String.fromCharCode(data[i]);
-		    var bstr = arr.join("");
-		    var oFile = XLSX.read(bstr, {
-		      type: "binary",
-		      cellDates: true,
-		      cellStyles: true
-		    });
-		    // console.log(oFile);
-		    oFile.SheetNames.forEach(function(sheetName) {
-		      // console.log(oFile.Sheets[sheetName]);
-		    jsonoutput = XLSX.utils.sheet_to_row_object_array(oFile.Sheets[sheetName]);
-		      //console.log(roa);
-		      
-		     
+		  if(file.type =='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || file.type=='application/vnd.ms-excel')
+			  {
+			  var fileReader = new FileReader();
+			  fileReader.onload = function(e) {
+			    console.log(e);
+			    console.log(e.target.result);
+			    var filename = file.name;
+			    // call 'xlsx' to read the file
+			    var data = new Uint8Array(e.target.result);
+			    var arr = [];
+			    for (var i = 0; i != data.length; ++i)
+			      arr[i] = String.fromCharCode(data[i]);
+			    var bstr = arr.join("");
+			    var oFile = XLSX.read(bstr, {
+			      type: "binary",
+			      cellDates: true,
+			      cellStyles: true
+			    });
+			    // console.log(oFile);
+			    oFile.SheetNames.forEach(function(sheetName) {
+			      // console.log(oFile.Sheets[sheetName]);
+			    jsonoutput = XLSX.utils.sheet_to_row_object_array(oFile.Sheets[sheetName]);
+			      //console.log(roa);
+			      
+			     
 
-		    });
-		    defer.resolve(jsonoutput);
-		  };
+			    });
+			    defer.resolve(jsonoutput);
+			  };
 
-		  fileReader.readAsArrayBuffer(file);
-		  return defer.promise;
+			  fileReader.readAsArrayBuffer(file);
+			  return defer.promise;
+			  }
+		  else
+			  {
+			  defer.resolve();//undefined
+			   return defer.promise;
+			  }
+		 
+		  
 	}
 	
 	$scope.dummy=function()
