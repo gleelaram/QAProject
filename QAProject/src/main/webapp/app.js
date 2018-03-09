@@ -40,8 +40,8 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.errorflag=false;
 	
-	var db = firebase.database().ref().child('QA');
-	$scope.questionList=$firebaseArray(db);
+	/*var db = firebase.database().ref().child('QA');
+	$scope.questionList=$firebaseArray(db);*/
 	
 	$scope.firebaseUser=$firebaseAuth().$getAuth();
 	
@@ -53,6 +53,15 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		});
 		
 	};
+	
+	$http.get('/QAProject/rest/getQuestions').then(function(response){
+		$scope.questionList=response.data;
+		
+		console.log(response.data);
+		
+	},function(error){
+		console.log("error");
+	});
 	
 	$scope.addQA=function(){
 		
@@ -86,9 +95,18 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 			 $scope.errorflag=false;
 			 $scope.errorMsg="";
 			console.log($scope.QAF);
-			$scope.questionList.$add($scope.QAF).then(function(ref) {
+			/*$scope.questionList.$add($scope.QAF).then(function(ref) {
 			  var id = ref.key;
 			  console.log("added record with id " + id);
+			});*/
+			
+			var object=JSON.stringify($scope.QAF)
+			$http.post('/QAProject/rest/addQuestion',object).then(function(response){
+				console.log(response.data);
+				$scope.questionList=response.data;
+				
+			},function(error){
+				console.log(error);
 			});
 			
 		}
@@ -152,6 +170,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 					}
 				 });
 				}
+					
 				
 				
 			}else{
@@ -193,13 +212,22 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		{
 			object.skill="";
 		}
-		$scope.questionList.$add(object).then(function(ref) {
+		/*$scope.questionList.$add(object).then(function(ref) {
 			  var id = ref.key;
 			  console.log("added record with id " + id);
 			
 			  $scope.count=$scope.count+1;
 			  defer.resolve({count:$scope.count,iValue:iValue,error:""});
-			});
+			});*/
+		
+		$http.post('/QAProject/rest/addQuestion',object).then(function(response){
+			console.log(response.data);
+			 $scope.count=$scope.count+1;
+			 $scope.questionList=response.data;
+			 defer.resolve({count:$scope.count,iValue:iValue,error:""});
+		},function(error){
+			console.log(error);
+		});
 		return defer.promise;
 	}
 	
