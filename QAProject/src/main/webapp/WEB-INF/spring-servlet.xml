@@ -16,12 +16,6 @@
     </mvc:message-converters>
 </mvc:annotation-driven>
 
-  
-
-   <bean class = "org.springframework.web.servlet.view.InternalResourceViewResolver">
-      <property name = "prefix" value = "/WEB-INF/jsp/" />
-      <property name = "suffix" value = ".jsp" />
-   </bean>
    
    	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
