@@ -363,7 +363,7 @@ app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth','$wind
 
 $scope.SignUpPage=function(){
 	
-	
+	$window.sessionStorage.clear();
 	$location.path('/signup');
 };
 }]);
