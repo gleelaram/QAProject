@@ -23,7 +23,7 @@ app.config(function($routeProvider){
 
 
 
-app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage){
+app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage','$window',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage,$window){
 	
 	
 	/*$scope.$watchGroup(['Company', 'skill'], function(newVal, oldVal) { 
@@ -43,7 +43,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	/*var db = firebase.database().ref().child('QA');
 	$scope.questionList=$firebaseArray(db);*/
 	
-	$scope.firebaseUser=$firebaseAuth().$getAuth();
+	$scope.firebaseUser=JSON.parse($window.sessionStorage.getItem("userDetails"));
 	
 	
 	$scope.signOut=function()
@@ -308,7 +308,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 }]);
 
-app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location',function($scope,$http,$firebaseAuth,$location){
+app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location','$window',function($scope,$http,$firebaseAuth,$location,$window){
 	
 	 $scope.signuperror=true;
 	    $scope.signupsuccess=false;
@@ -320,6 +320,7 @@ app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location',funct
 		    console.log("User " + firebaseUser.uid + " created successfully!");
 		    $scope.signuperror=true;
 		    $scope.signupsuccess=true;
+		    $window.sessionStorage.setItem("userDetails",firebaseUser);
 		    $scope.message="User with email"+$scope.user.email+" created successfully!";
 		    $location.path('/');
 		  }).catch(function(error) {
@@ -336,7 +337,7 @@ app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location',funct
 }]);
 
 
-app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth',function($scope,$http,$location,$firebaseAuth){
+app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth','$window',function($scope,$http,$location,$firebaseAuth,$window){
 	
 	  $scope.signinerror=true;
 	  $scope.signinsuccess=false;
@@ -345,6 +346,7 @@ app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth',functi
 		$firebaseAuth().$signInWithEmailAndPassword($scope.user.email,$scope.user.password).then(function(firebaseUser){
 			 console.log("Logged in as:", firebaseUser.uid);
 			 $scope.message="Logged in as:"+$scope.user.email;
+			 $window.sessionStorage.setItem("userDetails",JSON.stringify(firebaseUser));
 			 $scope.signinerror=true;
 			  $scope.signinsuccess=true;
 			 $location.path('/QAView');
@@ -365,6 +367,8 @@ $scope.SignUpPage=function(){
 	$location.path('/signup');
 };
 }]);
+
+
 
 
 
