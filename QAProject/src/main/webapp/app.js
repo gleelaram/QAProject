@@ -23,7 +23,7 @@ app.config(function($routeProvider){
 
 
 
-app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage','$window',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage,$window){
+app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage','$window','$filter',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage,$window,$filter){
 	
 	
 	/*$scope.$watchGroup(['Company', 'skill'], function(newVal, oldVal) { 
@@ -46,6 +46,21 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	$scope.firebaseUser=JSON.parse($window.sessionStorage.getItem("userDetails"));
 	
 	
+	
+	$scope.searchCompany=function(QAObject)
+	{  
+		var tempList=$scope.questionList;
+		$scope.SearchObj={company: QAObject.company,skill : undefined,subkill : undefined , location : undefined};
+		$scope.questionList=$filter('filter')(tempList, { company: QAObject.company });
+		
+		console.log(QAObject);
+		
+	}
+	
+	
+	
+	
+	
 	$scope.signOut=function()
 	{
 		$firebaseAuth().$signOut().then(function(){
@@ -55,6 +70,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	};
 	
 	$http.get('/QAProject/rest/getQuestions').then(function(response){
+		$scope.fixedQuestionList = response.data;
 		$scope.questionList=response.data;
 		
 		console.log(response.data);

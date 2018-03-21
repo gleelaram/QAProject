@@ -25,8 +25,17 @@ public class QA {
  
  @Column(name="company")
  private String company;
+ 
+ @Column(name="location")
+ private String location;
 
- public int getQa_id() {
+ public String getLocation() {
+	return location;
+}
+public void setLocation(String location) {
+	this.location = location;
+}
+public int getQa_id() {
 	return qa_id;
 }
 public void setQa_id(int qa_id) {
@@ -61,7 +70,7 @@ public void setSubskill(String subskill) {
 @Override
 public String toString() {
 	return "QA [qa_id=" + qa_id + ", question=" + question + ", skill=" + skill + ", subskill=" + subskill
-			+ ", company=" + company + "]";
+			+ ", company=" + company + ", location=" + location + "]";
 }
 
 }

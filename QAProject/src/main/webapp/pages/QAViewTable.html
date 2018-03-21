@@ -16,6 +16,8 @@
 <th>Question</th>
 <th>Company</th>
 <th>skill</th>
+<th>subskill</th>
+<th>location</th>
 </tr>
 <tr>
  <td></td>
@@ -26,10 +28,12 @@
 </thead>
 <tbody>
 <tr ng-repeat="QAObject in QA = (questionList | filter:{company: Company, skill:skill})">
-<th>{{$index+1}}</th>
-<td>{{QAObject.question}}</td>
-<td>{{QAObject.company}}</td>
-<td>{{QAObject.skill}}</td>
+<td>{{$index+1}}</td>
+<td >{{QAObject.question}}</td>
+<td ng-click="searchCompany(QAObject)">{{QAObject.company}}</td>
+<td ng-click="searchskill(QAObject)">{{QAObject.skill}}</td>
+<td ng-click="searchsubskill(QAObject)">{{QAObject.subskill}}</td>
+<td ng-click="searchlocation(QAObject)">{{QAObject.location}}</td>
 </tr>
 
 </tbody>
