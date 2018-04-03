@@ -45,25 +45,169 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.firebaseUser=JSON.parse($window.sessionStorage.getItem("userDetails"));
 	
+	$scope.countObj={company: undefined,skill : undefined,subskill : undefined , location : undefined};
+	$scope.SearchObj={};
 	
+	var count =0;
+	var max = 0;
+	$scope.backsearch=false;
 	
 	$scope.searchCompany=function(QAObject)
-	{  
-		var tempList=$scope.questionList;
-		$scope.SearchObj={company: QAObject.company,skill : undefined,subkill : undefined , location : undefined};
-		$scope.questionList=$filter('filter')(tempList, { company: QAObject.company });
+	{ 
+		if(count > 4 || QAObject.company == null)
+			{
+			  return
+			}else{
+				
+				var tempList=$scope.questionList;
+				
+				$scope.SearchObj.company = QAObject.company;
+				
+				count=count+1;
+				$scope.countObj.company = count;
+				
+				max = $scope.countObj.company;
+				
+				$scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+				
+				console.log(QAObject);
+				$scope.backsearch=true;
+			}
 		
-		console.log(QAObject);
 		
 	}
 	
+	$scope.searchskill=function(QAObject)
+	{ 
+		if(count > 4  || QAObject.skill == null)
+		{
+		  return
+		}else{
+		var tempList=$scope.questionList;
+		$scope.SearchObj.skill =  QAObject.skill;
+		count=count+1;
+		$scope.countObj.skill = count;
+		max = $scope.countObj.skill;
+		$scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		console.log(QAObject);
+		$scope.backsearch=true;
+		}
+		
+	}
 	
+	$scope.searchsubskill=function(QAObject)
+	{ 
+		if(count > 4 || QAObject.subskill == null)
+		{
+		  return
+		}else{
+		var tempList=$scope.questionList;
+		
+		$scope.SearchObj.subskill = QAObject.subskill;
+		count=count+1;
+		$scope.countObj.subskill = count;
+		max = $scope.countObj.subskill;
+		$scope.questionList=$filter('filter')(tempList, $scope.SearchObj);
+		
+		console.log(QAObject);
+		$scope.backsearch=true;
+		}
+		
+	}
+	
+	$scope.searchlocation=function(QAObject)
+	{ 
+		if(count > 4 || QAObject.location == null)
+		{
+		  return
+		}else{
+		var tempList=$scope.questionList;
+		
+		$scope.SearchObj.location = QAObject.location;
+		count=count+1;
+		$scope.countObj.location =count;
+		max = $scope.countObj.location;
+	
+		$scope.questionList=$filter('filter')(tempList, $scope.SearchObj);
+		
+		console.log(QAObject);
+		$scope.backsearch=false;
+		}
+		
+	}
+	
+   
+	
+	$scope.back = function()
+	{
+	  if($scope.countObj.company === max)
+		  {
+		    max = max-1;
+		    count = count-1;
+		    $scope.countObj.company = undefined;
+		    delete $scope.SearchObj.company;
+		    var tempList=$scope.fixedQuestionList;
+		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		    
+		    if(count ==0)
+		    	{
+		    	$scope.backsearch=false;
+		    	}
+		    
+		  }
+	  else if ($scope.countObj.skill === max)
+		  {
+		    max = max-1;
+		    count = count-1;
+		    $scope.countObj.skill = undefined;
+		    delete $scope.SearchObj.skill;
+		    var tempList=$scope.fixedQuestionList;
+		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		    if(count ==0)
+	    	{
+	    	$scope.backsearch=false;
+	    	}
+		  }
+	  else if ($scope.countObj.subskill === max)
+	  {
+		  max = max-1;
+		    count = count-1;
+		    $scope.countObj.subskill = undefined;
+		   delete $scope.SearchObj.subskill;
+		    var tempList=$scope.fixedQuestionList;
+		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		    if(count ==0)
+	    	{
+	    	$scope.backsearch=false;
+	    	}
+	  }
+	  else if ($scope.countObj.location === max)
+	  {
+		    max = max-1;
+		    count = count-1;
+		    $scope.countObj.location = undefined;
+		    delete $scope.SearchObj.location;
+		    var tempList=$scope.fixedQuestionList;
+		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		    if(count ==0)
+	    	{
+	    	$scope.backsearch=false;
+	    	}
+	  }
+	  else{
+		  console.log("some condition");
+		  $scope.questionList=$scope.fixedQuestionList;
+		  $scope.backsearch=false;
+	  }
+		
+	}
 	
 	
 	
 	$scope.signOut=function()
 	{
 		$firebaseAuth().$signOut().then(function(){
+			$window.sessionStorage.clear();
 			$location.path('/');
 		});
 		
@@ -99,6 +243,14 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	if($scope.QAF.skill==undefined)
 	{
 	$scope.QAF.skill="";
+	}
+	if($scope.QAF.subskill==undefined)
+	{
+	$scope.QAF.subskill="";
+	}
+	if($scope.QAF.location==undefined)
+	{
+	$scope.QAF.location="";
 	}
 		
 		if($scope.QAF==undefined||$scope.QAF.question==undefined)
@@ -227,6 +379,14 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		if(object.skill==undefined||object.skill.trim()=="")
 		{
 			object.skill="";
+		}
+		if(object.subskill==undefined||object.subskill.trim()=="")
+		{
+			object.subskill="";
+		}
+		if(object.location==undefined||object.location.trim()=="")
+		{
+			object.location="";
 		}
 		/*$scope.questionList.$add(object).then(function(ref) {
 			  var id = ref.key;
@@ -379,7 +539,7 @@ app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth','$wind
 
 $scope.SignUpPage=function(){
 	
-	$window.sessionStorage.clear();
+	
 	$location.path('/signup');
 };
 }]);
