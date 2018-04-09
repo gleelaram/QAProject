@@ -1,4 +1,4 @@
-var app=angular.module("QAApp",['ngRoute','firebase']);
+var app=angular.module("QAApp",['ngRoute','firebase','angularUtils.directives.dirPagination']);
 
 app.config(function($routeProvider){
 	
@@ -39,6 +39,9 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	});*/
 	
 	$scope.errorflag=false;
+	$scope.currentPage = 1;
+	$scope.numPerPage = 20;
+	$scope.maxSize = 3;
 	
 	/*var db = firebase.database().ref().child('QA');
 	$scope.questionList=$firebaseArray(db);*/
@@ -59,7 +62,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 			  return
 			}else{
 				
-				var tempList=$scope.questionList;
+				var tempList=$scope.fixedQuestionList;
 				
 				$scope.SearchObj.company = QAObject.company;
 				
@@ -69,6 +72,16 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 				max = $scope.countObj.company;
 				
 				$scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+				/*$scope.lengthOfQA=$scope.questionList.length;
+				
+				   if( $scope.currentPage==1)
+				    {
+				    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+				         , end = begin + $scope.numPerPage;
+				         $scope.questionList = $scope.questionList.slice(begin, end);
+				    }else{
+				    	 $scope.currentPage=1;
+				    }*/
 				
 				console.log(QAObject);
 				$scope.backsearch=true;
@@ -83,17 +96,30 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		{
 		  return
 		}else{
-		var tempList=$scope.questionList;
+		var tempList=$scope.fixedQuestionList;
 		$scope.SearchObj.skill =  QAObject.skill;
 		count=count+1;
 		$scope.countObj.skill = count;
 		max = $scope.countObj.skill;
 		$scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+
+		/*$scope.lengthOfQA=$scope.questionList.length;
+		
+		   if( $scope.currentPage==1)
+		    {
+		    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		         , end = begin + $scope.numPerPage;
+		         $scope.questionList = $scope.questionList.slice(begin, end);
+		    }else{
+		    	 $scope.currentPage=1;
+		    } */
+		   
+		   
 		console.log(QAObject);
 		$scope.backsearch=true;
 		}
 		
-	}
+	};
 	
 	$scope.searchsubskill=function(QAObject)
 	{ 
@@ -101,19 +127,29 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		{
 		  return
 		}else{
-		var tempList=$scope.questionList;
+		var tempList=$scope.fixedQuestionList;
 		
 		$scope.SearchObj.subskill = QAObject.subskill;
 		count=count+1;
 		$scope.countObj.subskill = count;
 		max = $scope.countObj.subskill;
 		$scope.questionList=$filter('filter')(tempList, $scope.SearchObj);
+	/*	$scope.lengthOfQA=$scope.questionList.length;
+		
+		   if( $scope.currentPage==1)
+		    {
+		    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		         , end = begin + $scope.numPerPage;
+		         $scope.questionList = $scope.questionList.slice(begin, end);
+		    }else{
+		    	 $scope.currentPage=1;
+		    }*/
 		
 		console.log(QAObject);
 		$scope.backsearch=true;
 		}
 		
-	}
+	};
 	
 	$scope.searchlocation=function(QAObject)
 	{ 
@@ -121,7 +157,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		{
 		  return
 		}else{
-		var tempList=$scope.questionList;
+		var tempList=$scope.fixedQuestionList;
 		
 		$scope.SearchObj.location = QAObject.location;
 		count=count+1;
@@ -129,6 +165,16 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		max = $scope.countObj.location;
 	
 		$scope.questionList=$filter('filter')(tempList, $scope.SearchObj);
+	/*	$scope.lengthOfQA=$scope.questionList.length;
+		
+		if( $scope.currentPage==1)
+	    {
+	    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+	         , end = begin + $scope.numPerPage;
+	         $scope.questionList = $scope.questionList.slice(begin, end);
+	    }else{
+	    	 $scope.currentPage=1;
+	    }*/
 		
 		console.log(QAObject);
 		$scope.backsearch=false;
@@ -148,7 +194,15 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		    delete $scope.SearchObj.company;
 		    var tempList=$scope.fixedQuestionList;
 		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
-		    
+		   /* $scope.lengthOfQA=$scope.questionList.length;
+		    if( $scope.currentPage==1)
+		    {
+		    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		         , end = begin + $scope.numPerPage;
+		         $scope.questionList = $scope.questionList.slice(begin, end);
+		    }else{
+		    	 $scope.currentPage=1;
+		    }*/
 		    if(count ==0)
 		    	{
 		    	$scope.backsearch=false;
@@ -163,6 +217,17 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		    delete $scope.SearchObj.skill;
 		    var tempList=$scope.fixedQuestionList;
 		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		  /*  $scope.lengthOfQA=$scope.questionList.length;
+		    
+		    if( $scope.currentPage==1)
+		    {
+		    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		         , end = begin + $scope.numPerPage;
+		         $scope.questionList = $scope.questionList.slice(begin, end);
+		    }else{
+		    	 $scope.currentPage=1;
+		    }*/
+		    
 		    if(count ==0)
 	    	{
 	    	$scope.backsearch=false;
@@ -176,6 +241,17 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		   delete $scope.SearchObj.subskill;
 		    var tempList=$scope.fixedQuestionList;
 		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		  /*  $scope.lengthOfQA=$scope.questionList.length;
+		    
+		    if( $scope.currentPage==1)
+		    {
+		    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		         , end = begin + $scope.numPerPage;
+		         $scope.questionList = $scope.questionList.slice(begin, end);
+		    }else{
+		    	 $scope.currentPage=1;
+		    }*/
+		    
 		    if(count ==0)
 	    	{
 	    	$scope.backsearch=false;
@@ -188,7 +264,20 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		    $scope.countObj.location = undefined;
 		    delete $scope.SearchObj.location;
 		    var tempList=$scope.fixedQuestionList;
+		   
+		    
 		    $scope.questionList=$filter('filter')(tempList,$scope.SearchObj);
+		   /* $scope.lengthOfQA=$scope.questionList.length;
+		    
+		    if( $scope.currentPage==1)
+		    {
+		    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		         , end = begin + $scope.numPerPage;
+		         $scope.questionList = $scope.questionList.slice(begin, end);
+		    }else{
+		    	 $scope.currentPage=1;
+		    }*/
+		    
 		    if(count ==0)
 	    	{
 	    	$scope.backsearch=false;
@@ -197,7 +286,16 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	  else{
 		  console.log("some condition");
 		  $scope.questionList=$scope.fixedQuestionList;
+		 /* $scope.lengthOfQA=$scope.questionList.length;*/
 		  $scope.backsearch=false;
+	/*	  if( $scope.currentPage==1)
+		    {
+		    	 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		         , end = begin + $scope.numPerPage;
+		         $scope.questionList = $scope.questionList.slice(begin, end);
+		    }else{
+		    	 $scope.currentPage=1;
+		    }*/
 	  }
 		
 	}
@@ -217,11 +315,44 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		$scope.fixedQuestionList = response.data;
 		$scope.questionList=response.data;
 		
-		console.log(response.data);
+		
+		 
+		/* $scope.tableParams = new NgTableParams({}, { dataset: response.data}); 
+		 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		    , end = begin + $scope.numPerPage;
+		    
+		    $scope.questionList = $scope.fixedQuestionList.slice(begin, end);
+		    $scope.lengthOfQA=$scope.fixedQuestionList.length;
+		console.log(response.data);*/
 		
 	},function(error){
 		console.log("error");
 	});
+	
+	/*  $scope.$watch('currentPage + numPerPage', function() {
+		  var check =0;
+		    var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+		    , end = begin + $scope.numPerPage;
+		    
+		    for(var key in $scope.countObj)
+		    {
+		    	if($scope.countObj[key]!=undefined)
+		    	{
+		    		check=1;
+		    		break;
+		    	}
+		    }
+		    if(check==1)
+		    {
+		    	$scope.questionList=$filter('filter')($scope.fixedQuestionList,$scope.SearchObj);
+		    	$scope.questionList = $scope.questionList.slice(begin, end);
+
+		    }else{
+		    	 $scope.questionList = $scope.fixedQuestionList.slice(begin, end);
+		    $scope.lengthOfQA=$scope.fixedQuestionList.length;
+		    console.log($scope.fixedQuestionList.length);
+		    }
+		  });*/
 	
 	$scope.addQA=function(){
 		
@@ -271,8 +402,14 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 			var object=JSON.stringify($scope.QAF)
 			$http.post('/QAProject/rest/addQuestion',object).then(function(response){
 				console.log(response.data);
+				$scope.fixedQuestionList = response.data;
 				$scope.questionList=response.data;
-				
+				/*$scope.currentPage=1;
+				 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+				    , end = begin + $scope.numPerPage;
+				    
+				    $scope.questionList = $scope.fixedQuestionList.slice(begin, end);
+				    $scope.lengthOfQA=$scope.fixedQuestionList.length;*/
 			},function(error){
 				console.log(error);
 			});
