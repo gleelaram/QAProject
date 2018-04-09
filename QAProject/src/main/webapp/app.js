@@ -57,7 +57,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.searchCompany=function(QAObject)
 	{ 
-		if(count > 4 || QAObject.company == null)
+		if(count > 4 || QAObject.company == null || $scope.countObj.company!= undefined )
 			{
 			  return
 			}else{
@@ -92,7 +92,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.searchskill=function(QAObject)
 	{ 
-		if(count > 4  || QAObject.skill == null)
+		if(count > 4  || QAObject.skill == null || $scope.countObj.skill!= undefined )
 		{
 		  return
 		}else{
@@ -123,7 +123,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.searchsubskill=function(QAObject)
 	{ 
-		if(count > 4 || QAObject.subskill == null)
+		if(count > 4 || QAObject.subskill == null ||$scope.countObj.subskill!= undefined )
 		{
 		  return
 		}else{
@@ -153,7 +153,7 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.searchlocation=function(QAObject)
 	{ 
-		if(count > 4 || QAObject.location == null)
+		if(count > 4 || QAObject.location == null ||$scope.countObj.location!= undefined )
 		{
 		  return
 		}else{
