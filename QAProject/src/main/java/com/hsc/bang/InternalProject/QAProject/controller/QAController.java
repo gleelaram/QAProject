@@ -37,6 +37,9 @@ public class QAController {
 		
 	}
 	
+	
+	
+	
 /*	@RequestMapping(value="/addQuestion",method = RequestMethod.POST)
 	
 	public @ResponseBody List<String> addQuestion(@RequestBody String qA) throws JsonParseException, JsonMappingException, IOException
@@ -62,6 +65,18 @@ public class QAController {
 		
 		QAService.addQuestions(q);
 		List<QA> questions=QAService.getQuestions();
+		return questions;
+		
+		
+	}
+	
+@RequestMapping(value="/doLogin",method = RequestMethod.GET)
+	
+	public @ResponseBody List<QA> doLogin()
+	{
+		
+		List<QA> questions=QAService.getQuestions();
+		
 		return questions;
 		
 		

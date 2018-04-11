@@ -656,7 +656,7 @@ app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth','$wind
 	  $scope.signinsuccess=false;
 	$scope.SignIn=function(){
 	     
-		$firebaseAuth().$signInWithEmailAndPassword($scope.user.email,$scope.user.password).then(function(firebaseUser){
+	/*	$firebaseAuth().$signInWithEmailAndPassword($scope.user.email,$scope.user.password).then(function(firebaseUser){
 			 console.log("Logged in as:", firebaseUser.uid);
 			 $scope.message="Logged in as:"+$scope.user.email;
 			 $window.sessionStorage.setItem("userDetails",JSON.stringify(firebaseUser));
@@ -670,6 +670,20 @@ app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth','$wind
 			  $scope.signinerror=false;
 			  $scope.signinsuccess=false;
 			
+		});*/
+		
+		$http.post('/QAProject/rest/login',$scope.user).then(function(response){
+			console.log(response.data);
+			/*$scope.fixedQuestionList = response.data;
+			$scope.questionList=response.data;*/
+			/*$scope.currentPage=1;
+			 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+			    , end = begin + $scope.numPerPage;
+			    
+			    $scope.questionList = $scope.fixedQuestionList.slice(begin, end);
+			    $scope.lengthOfQA=$scope.fixedQuestionList.length;*/
+		},function(error){
+			console.log(error);
 		});
 };
 
