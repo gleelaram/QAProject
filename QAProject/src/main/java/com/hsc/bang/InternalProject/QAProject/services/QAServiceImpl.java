@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hsc.bang.InternalProject.QAProject.dao.QADao;
 import com.hsc.bang.InternalProject.QAProject.dao.Entity.QA;
+import com.hsc.bang.InternalProject.QAProject.dao.Entity.Users;
 @Service
 public class QAServiceImpl implements QAService {
 	
@@ -29,6 +30,13 @@ public class QAServiceImpl implements QAService {
 		qaDao.addQuestion(q);
 		System.out.println("Entered in the ADD Service Of QA");
 		return null;
+	}
+
+	@Transactional
+	public void addUser(Users user) {
+		
+		qaDao.addUser(user);
+		
 	}
 
 }

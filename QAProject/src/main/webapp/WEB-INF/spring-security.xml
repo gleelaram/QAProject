@@ -4,21 +4,64 @@
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
     http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.0.xsd">
       
-    <http auto-config="true" >
-        <intercept-url pattern="/" access="permitAll" />
-        <intercept-url pattern="/home" access="permitAll" />
-       <!--  <intercept-url pattern="/login" access="permitAll" /> -->
-       <!--  <form-login  authentication-failure-url="/Access_Denied" /> -->
-        <form-login  login-page="/*/login"
-                     username-parameter="username"
-                     password-parameter="password" />
-        <logout logout-success-url="/*/logout" logout-url="/j_spring_security_logout" />
-        <csrf disabled="true"/> 
+
+      
+    <http auto-config="true">
+    
+       <csrf disabled="true"/>
+        <!-- <intercept-url pattern="/*"  access="permitAll" /> -->
+        <intercept-url pattern="/rest/login1" access="hasRole('ROLE_USER')" />
+          <intercept-url pattern="/rest/Access_Denied" access="permitAll" />
+           <intercept-url pattern="/rest/addUser" access="permitAll" />
+        <intercept-url pattern="/rest/getQuestions" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/rest/addQuestion" access="hasRole('ROLE_USER')" />
+        <intercept-url pattern="/pages/*.html" access="permitAll" />
+        <intercept-url pattern="/js/*.js" access="permitAll" />
+        <intercept-url pattern="/css/*.css" access="permitAll" />
+        <form-login 
+           login-page="/pages/login.html" 
+           login-processing-url="/login1" 
+           username-parameter="username"
+           password-parameter="password" authentication-failure-url="/Access_Denied"  />
+          <http-basic entry-point-ref="customBasicAuthenticationEntryPoint" />
+        <logout logout-url="/j_spring_security_logout" />
+  
+      <!--    <session-management invalid-session-url="/index.html" session-fixation-protection="newSession" >
+		   <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
+		</session-management> -->
+       <logout/>   
     </http>
   <debug/>
   
     <authentication-manager >
            <authentication-provider user-service-ref="customUserDetailsService"/>      
 	</authentication-manager>
+	
+	  <beans:bean id="customUserDetailsService" class="com.hsc.bang.InternalProject.QAProject.services.customUserDetailsService" />
+	  
+	  
+	   <beans:bean id="customBasicAuthenticationEntryPoint" class="com.hsc.bang.InternalProject.QAProject.services.CustomBasicAuthenticationEntryPoint">
+	   <beans:constructor-arg name="realmName" value="hsc.com"></beans:constructor-arg>
+	   </beans:bean>
+	 
+	
+	  
+	 
+	 <!--  <beans:bean id="restAuthenticationSuccessHandler" class="com.hsc.bang.InternalProject.QAProject.services.RestAuthenticationSuccessHandler" />
+	  
+	   <beans:bean id="restUnauthorizedEntryPoint" class="com.hsc.bang.InternalProject.QAProject.services.RestUnauthorizedEntryPoint" /> -->
+	
+	<!--  <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="priya" password="priya" authorities="ROLE_USER" />
+            </user-service>
+        </authentication-provider>
+    </authentication-manager> -->
+    
+
+	
+
+
           
 </beans:beans>

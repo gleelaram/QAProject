@@ -32,7 +32,7 @@ public class customUserDetailsService implements UserDetailsService{
             throw new UsernameNotFoundException("Username not found");
         }
             return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), 
-                 user.getState().equals("Active"), true, true, true, getGrantedAuthorities(user));
+                 user.getEnabled().toString().equals("1"), true, true, true, getGrantedAuthorities(user));
     }
  
      
@@ -41,7 +41,7 @@ public class customUserDetailsService implements UserDetailsService{
          
         for(UserProfile userProfile : user.getUserProfiles()){
             System.out.println("UserProfile : "+userProfile);
-            authorities.add(new SimpleGrantedAuthority("ROLE_"+userProfile.getRole()));
+            authorities.add(new SimpleGrantedAuthority(userProfile.getRole()));
         }
         System.out.print("authorities :"+authorities);
         return authorities;

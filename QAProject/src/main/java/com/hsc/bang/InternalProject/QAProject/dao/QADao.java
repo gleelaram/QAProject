@@ -13,4 +13,6 @@ public interface QADao
 	
 	public Users getUser(String username);
 	
+	public void addUser(Users user);
+	
 }

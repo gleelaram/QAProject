@@ -22,6 +22,8 @@
 		<property name="annotatedClasses">
 			<list>
 				<value>com.hsc.bang.InternalProject.QAProject.dao.Entity.QA</value>
+				<value>com.hsc.bang.InternalProject.QAProject.dao.Entity.Users</value>
+				<value>com.hsc.bang.InternalProject.QAProject.dao.Entity.UserProfile</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">
@@ -38,6 +40,18 @@
 		<property name="username" value="root" />
 		<property name="password" value="root" />
 	</bean>
+	
+
+	
+<!-- 	<bean class = "org.springframework.web.servlet.view.InternalResourceViewResolver">
+   <property name = "prefix" value = ""/>
+   <property name = "suffix" value = ".html"/>
+</bean> -->
+
+<mvc:resources location="pages/*" mapping="/pages/**"></mvc:resources>
+<mvc:resources location="js/*" mapping="/js/**"></mvc:resources>
+<mvc:resources location="css/*" mapping="/css/**"></mvc:resources>
+<mvc:resources location="/*" mapping="/**"></mvc:resources>
 	
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	

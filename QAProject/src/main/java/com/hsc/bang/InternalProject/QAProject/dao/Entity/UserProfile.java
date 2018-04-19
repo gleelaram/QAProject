@@ -24,8 +24,8 @@ public class UserProfile {
 	    @Column(name="role", nullable=false)
 	    private String role; 
 	     
-	    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "userProfiles")
-	    private List<Users>users =new ArrayList<Users>();
+	   /* @ManyToMany(fetch = FetchType.EAGER, mappedBy = "userProfiles")
+	    private List<Users>users =new ArrayList<Users>();*/
 
 		
 
@@ -45,13 +45,13 @@ public class UserProfile {
 			this.role = role;
 		}
 
-		public List<Users> getUsers() {
+		/*public List<Users> getUsers() {
 			return users;
 		}
 
 		public void setUsers(List<Users> users) {
 			this.users = users;
-		}
+		}*/
 
 		@Override
 		public int hashCode() {
@@ -59,7 +59,6 @@ public class UserProfile {
 			int result = 1;
 			result = prime * result + ((role == null) ? 0 : role.hashCode());
 			result = prime * result + user_role_id;
-			result = prime * result + ((users == null) ? 0 : users.hashCode());
 			return result;
 		}
 
@@ -79,16 +78,12 @@ public class UserProfile {
 				return false;
 			if (user_role_id != other.user_role_id)
 				return false;
-			if (users == null) {
-				if (other.users != null)
-					return false;
-			} else if (!users.equals(other.users))
-				return false;
+		
 			return true;
 		}
 		@Override
 		public String toString() {
-			return "UserProfile [user_role_id=" + user_role_id + ", role=" + role + ", users=" + users + "]";
+			return "UserProfile [user_role_id=" + user_role_id + ", role=" + role +"]";
 		}
 	}
 	

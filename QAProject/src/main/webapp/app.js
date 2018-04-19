@@ -1,6 +1,8 @@
 var app=angular.module("QAApp",['ngRoute','firebase','angularUtils.directives.dirPagination']);
 
-app.config(function($routeProvider){
+app.config(['$routeProvider','$httpProvider',function($routeProvider,$httpProvider){
+	
+	 $httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 	
 	$routeProvider
 	.when('/',{
@@ -15,28 +17,21 @@ app.config(function($routeProvider){
 		templateUrl: 'pages/QAViewTable.html',
 		controller: 'QAViewCntrl'
 	})
+	.when('/403',{
+		templateUrl: 'pages/403.html',
+	})
 	 .otherwise({
 	        template : "<h1>None</h1><p>Nothing has been selected</p>"
 	    });
 	
-});
+}]);
 
 
 
-app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage','$window','$filter',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage,$window,$filter){
+app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage','$window','$filter','$location',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage,$window,$filter,$location){
 	
 	
-	/*$scope.$watchGroup(['Company', 'skill'], function(newVal, oldVal) { 
-		
-		if(newVal[0]=="")
-			{
-			$scope.Company=undefined;
-			}
-		if(newVal[1]=="")
-		{
-		$scope.skill=undefined;
-		}
-	});*/
+
 	
 	$scope.errorflag=false;
 	$scope.currentPage = 1;
@@ -304,12 +299,21 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	
 	$scope.signOut=function()
 	{
-		$firebaseAuth().$signOut().then(function(){
+		/*$firebaseAuth().$signOut().then(function(){
 			$window.sessionStorage.clear();
 			$location.path('/');
+		});*/
+		$window.sessionStorage.clear();
+		$http.post('/QAProject/rest/j_spring_security_logout',object).then(function(response){
+			console.log(response.data);
+		
+			
+		},function(error){
+			console.log(error);
 		});
 		
-	};
+	}
+	
 	
 	$http.get('/QAProject/rest/getQuestions').then(function(response){
 		$scope.fixedQuestionList = response.data;
@@ -326,7 +330,10 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		console.log(response.data);*/
 		
 	},function(error){
-		console.log("error");
+		console.log(error);
+		/*$scope.errorMultiflag=true;
+		$scope.errorMultiMsg="Access Denined";*/
+		$location.path('/403');
 	});
 	
 	/*  $scope.$watch('currentPage + numPerPage', function() {
@@ -625,11 +632,13 @@ app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location','$win
 	
 	 $scope.signuperror=true;
 	    $scope.signupsuccess=false;
+	    
+	    $scope.roleList=[{role:"ROLE_USER",check:true},{role:"ROLE_ADMIN",check:false}];
 	
 	$scope.createAccount=function()
 	{
 		
-		$firebaseAuth().$createUserWithEmailAndPassword($scope.user.email,$scope.user.password).then(function(firebaseUser) {
+		/*$firebaseAuth().$createUserWithEmailAndPassword($scope.user.email,$scope.user.password).then(function(firebaseUser) {
 		    console.log("User " + firebaseUser.uid + " created successfully!");
 		    $scope.signuperror=true;
 		    $scope.signupsuccess=true;
@@ -641,7 +650,43 @@ app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location','$win
 		    $scope.message=error.message;
 		    $scope.signuperror=false;
 		    $scope.signupsuccess=false;
-		  });
+		  });*/
+		var userProfiles=[];
+		for(i in $scope.roleList)
+			{
+			 if(i.check)
+				 {
+				 userProfiles.push(i.role);
+				 }
+			}
+		if(userProfiles.length==0)
+			{
+			userProfiles.push("ROLE_USER");
+			}
+		$scope.user.userProfiles=userProfiles;
+		$scope.user.enabled=1;
+		$http.post('/QAProject/rest/addUser',$scope.user).then(function(response){
+			
+			console.log(response.data);
+			var userInfo = response.data;
+			 $window.sessionStorage.setItem("userDetails",JSON.stringify(response.data));
+			var check = userInfo.hasOwnProperty('status')?false:userInfo.authenticated;
+			if(check)
+				{
+				 $location.url('/QAView');
+				}
+			else{
+				$scope.message="UserName and Password is Wrong";
+				$scope.signinerror=false;
+			}
+		},function(error){
+			if(error.status==401)
+				{
+				$scope.message="UserName and Password is Wrong";
+				$scope.signinerror=false;
+				}
+		});
+		
 		
 	};
 	
@@ -671,19 +716,34 @@ app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth','$wind
 			  $scope.signinsuccess=false;
 			
 		});*/
+		 var string = $scope.user.username+":"+$scope.user.password;
+		 var encode = btoa(string);
+		 var encode = "Basic "+encode;
+		 var config = {
+	               
+	                headers: {"cache-control": "no-cache","authorization":encode}
+	            };
 		
-		$http.post('/QAProject/rest/login',$scope.user).then(function(response){
+		$http.post('/QAProject/rest/login1',$scope.user,config).then(function(response){
+		
 			console.log(response.data);
-			/*$scope.fixedQuestionList = response.data;
-			$scope.questionList=response.data;*/
-			/*$scope.currentPage=1;
-			 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
-			    , end = begin + $scope.numPerPage;
-			    
-			    $scope.questionList = $scope.fixedQuestionList.slice(begin, end);
-			    $scope.lengthOfQA=$scope.fixedQuestionList.length;*/
+			var userInfo = response.data;
+			 $window.sessionStorage.setItem("userDetails",JSON.stringify(response.data));
+			var check = userInfo.hasOwnProperty('status')?false:userInfo.authenticated;
+			if(check)
+				{
+				 $location.url('/QAView');
+				}
+			else{
+				$scope.message="UserName and Password is Wrong";
+				$scope.signinerror=false;
+			}
 		},function(error){
-			console.log(error);
+			if(error.status==401)
+				{
+				$scope.message="UserName and Password is Wrong";
+				$scope.signinerror=false;
+				}
 		});
 };
 

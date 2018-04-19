@@ -47,5 +47,11 @@ public Users getUser(String username) {
 	
 	return user;
 }
+
+public void addUser(Users user) {
+	
+	Session session = this.sessionFactory.getCurrentSession();
+	session.save(user);
+}
 	
 }

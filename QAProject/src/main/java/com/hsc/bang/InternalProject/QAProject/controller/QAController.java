@@ -1,12 +1,15 @@
 package com.hsc.bang.InternalProject.QAProject.controller;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hsc.bang.InternalProject.QAProject.dao.Entity.QA;
+import com.hsc.bang.InternalProject.QAProject.dao.Entity.Users;
 import com.hsc.bang.InternalProject.QAProject.services.QAService;
 
 @Controller
@@ -37,7 +41,24 @@ public class QAController {
 		
 	}
 	
+	@RequestMapping(value= "/login1",method = RequestMethod.POST)
 	
+	public @ResponseBody Principal user(Principal user) {
+        return user;
+    }
+	
+@RequestMapping(value= "/addUser",method = RequestMethod.POST)
+	
+	public @ResponseBody String  addUser(@RequestBody Users user) {
+	
+	
+	
+	   System.out.println("entered into controller of USER");
+	    QAService.addUser(user);
+        return "Add User";
+    }
+
+
 	
 	
 /*	@RequestMapping(value="/addQuestion",method = RequestMethod.POST)
@@ -70,16 +91,16 @@ public class QAController {
 		
 	}
 	
-@RequestMapping(value="/doLogin",method = RequestMethod.GET)
+	 private String getPrincipal(){
+	        String userName = null;
+	        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	 
+	        if (principal instanceof UserDetails) {
+	            userName = ((UserDetails)principal).getUsername();
+	        } else {
+	            userName = principal.toString();
+	        }
+	        return userName;
+	    }
 	
-	public @ResponseBody List<QA> doLogin()
-	{
-		
-		List<QA> questions=QAService.getQuestions();
-		
-		return questions;
-		
-		
-	}
-
 }
