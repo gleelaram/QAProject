@@ -12,16 +12,20 @@
 <table  class="table table-hover table-bordered tableview">
 <thead>
 <tr>
+<td  ng-show="deletePermission"><input type="checkbox" ng-click="selectall()"  ng-model="globalselect"></td>
 <th>S.NO</th>
 <th>Question</th>
 <th>Company</th>
 <th>skill</th>
 <th>subskill</th>
 <th>location</th>
+<th ng-show="deletePermission">Action</th>
 </tr>
 </thead>
 <tbody>
-<tr dir-paginate="QAObject in questionList|itemsPerPage:numPerPage" current-page="currentPage">
+<tr ng-show="!tableshow"><td colspan="{{colspan}}" style="text-align: center"><p>{{TableMsq}}</p></td></tr>
+<tr ng-show="tableshow" dir-paginate="QAObject in questionList|itemsPerPage:numPerPage" current-page="currentPage">
+<td><input type="checkbox"   ng-model="QAObject.selected"></td>
 <td>{{numPerPage*(currentPage-1)+$index+1}}</td>
 <!-- <td>{{$index+1}}</td> -->
 <td >{{QAObject.question}}</td>
@@ -29,6 +33,7 @@
 <td ng-click="searchskill(QAObject)">{{QAObject.skill}}</td>
 <td ng-click="searchsubskill(QAObject)">{{QAObject.subskill}}</td>
 <td ng-click="searchlocation(QAObject)">{{QAObject.location}}</td>
+<td  ng-show="deletePermission" ng-click="deleteQuestion(QAObject)"><button class="btn btn-danger">Delete</button>
 </tr>
 
 </tbody>
@@ -60,7 +65,10 @@
  
  <button  data-toggle="modal" data-target="#QAMModal" class='btn btn-primary' style="float: right;">Add MultipleQuestions</button> 
  <button  data-toggle="modal" data-target="#QAModal" class='btn btn-primary' style="float: right;margin-right: 8px;" ng-click="dummy()">Add Question</button>
- <a style="float: right;" ng-show="backsearch" ng-click="back()">back</a>
+ <button  class='btn btn-danger' style="float: right;margin-right: 8px;" ng-show="deletePermission"  ng-click="deleteSelected()">Delete MultipleQuestions </button>
+ 
+<!--  <a style="float: right;" ng-show="backsearch" ng-click="back()">back</a> -->
+ <button class='btn btn-primary' style="float: right;margin-right: 8px;" ng-show="backsearch" ng-click="back()">back</button>
 <div class="modal fade" id="QAModal">
     <div class="modal-dialog">
     

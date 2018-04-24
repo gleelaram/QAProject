@@ -53,5 +53,10 @@ public void addUser(Users user) {
 	Session session = this.sessionFactory.getCurrentSession();
 	session.save(user);
 }
+
+public void deleteQuestion(QA q) {
+	Session session = this.sessionFactory.getCurrentSession();
+	session.delete(q);
+}
 	
 }

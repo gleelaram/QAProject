@@ -21,8 +21,8 @@ public class UserProfile {
 	    @GeneratedValue(strategy=GenerationType.IDENTITY)
 	    private int user_role_id; 
 	 
-	    @Column(name="role", nullable=false)
-	    private String role; 
+	    @Column(name="role", nullable=false,unique=true)
+	    private String role=UserProfileType.USER.getUserProfileType();
 	     
 	   /* @ManyToMany(fetch = FetchType.EAGER, mappedBy = "userProfiles")
 	    private List<Users>users =new ArrayList<Users>();*/

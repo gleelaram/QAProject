@@ -12,9 +12,12 @@
         <!-- <intercept-url pattern="/*"  access="permitAll" /> -->
         <intercept-url pattern="/rest/login1" access="hasRole('ROLE_USER')" />
           <intercept-url pattern="/rest/Access_Denied" access="permitAll" />
-           <intercept-url pattern="/rest/addUser" access="permitAll" />
-        <intercept-url pattern="/rest/getQuestions" access="hasRole('ROLE_USER')" />
-        <intercept-url pattern="/rest/addQuestion" access="hasRole('ROLE_USER')" />
+           <intercept-url pattern="/rest/addUser" access="hasRole('ROLE_ADMIN')" />
+           
+        <intercept-url pattern="/rest/getQuestions" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')" />
+        <intercept-url pattern="/rest/addQuestion" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')" />
+         <intercept-url pattern="/rest/deleteQuestion" access="hasRole('ROLE_ADMIN')" />
+         <intercept-url pattern="/rest/delSelQues" access="hasRole('ROLE_ADMIN')" />
         <intercept-url pattern="/pages/*.html" access="permitAll" />
         <intercept-url pattern="/js/*.js" access="permitAll" />
         <intercept-url pattern="/css/*.css" access="permitAll" />
@@ -31,7 +34,7 @@
 		</session-management> -->
        <logout/>   
     </http>
-  <debug/>
+ <!--  <debug/> -->
   
     <authentication-manager >
            <authentication-provider user-service-ref="customUserDetailsService"/>      

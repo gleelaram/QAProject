@@ -34,13 +34,12 @@ public class Users {
     private String password;
          
     @Column(name="enabled", nullable=false)
-    private String enabled=State.ACTIVE.getState();
+    private String enabled;
  
     @ManyToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
     @JoinTable(name = "APP_USER_USER_ROLES", 
     joinColumns = { @JoinColumn(name = "userId") }, 
     inverseJoinColumns = { @JoinColumn(name = "user_role_id") })
-    
     private Set<UserProfile> userProfiles = new HashSet<UserProfile>();
 
 

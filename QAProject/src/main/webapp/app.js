@@ -31,8 +31,8 @@ app.config(['$routeProvider','$httpProvider',function($routeProvider,$httpProvid
 app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray','$firebaseAuth','$q','$firebaseStorage','$window','$filter','$location',function($scope,$http,$firebaseObject,$firebaseArray,$firebaseAuth,$q,$firebaseStorage,$window,$filter,$location){
 	
 	
-
-	
+    $scope.tableshow=true;
+	$scope.globalselect=false;
 	$scope.errorflag=false;
 	$scope.currentPage = 1;
 	$scope.numPerPage = 20;
@@ -42,13 +42,88 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	$scope.questionList=$firebaseArray(db);*/
 	
 	$scope.firebaseUser=JSON.parse($window.sessionStorage.getItem("userDetails"));
+	$scope.deletePermission=JSON.parse($window.sessionStorage.getItem("deletePerm"));
 	
+	if($scope.deletePermission==true)
+		{
+		  $scope.colspan=8;
+		}
+	else
+		{
+		 $scope.colspan=6;
+		}
 	$scope.countObj={company: undefined,skill : undefined,subskill : undefined , location : undefined};
 	$scope.SearchObj={};
 	
 	var count =0;
 	var max = 0;
 	$scope.backsearch=false;
+	
+	
+	$scope.selectall=function()
+	{
+		console.log("currentpage:"+$scope.currentPage);
+		var start=($scope.currentPage-1)*$scope.numPerPage;
+		console.log("start:"+start);
+		var end=$scope.currentPage*$scope.numPerPage;
+		console.log("end:"+end);
+		
+		if(end > $scope.questionList.length)
+			{
+			end=$scope.questionList.length;
+			console.log("end:"+end);
+			}
+		
+	   for(var i=start;i<end;i++)
+		   {
+		    $scope.questionList[i].selected=$scope.globalselect;
+		   }
+	    
+	}
+	
+	$scope.deleteSelected=function()
+	{
+		var dummyarray=[];
+		$scope.questionList.forEach(function(qa){
+			if(qa.selected)
+				{
+				delete qa.selected;
+				dummyarray.push(qa);
+				}
+		})
+		if(dummyarray.length!=0)
+			{
+		$http.post('/QAProject/rest/delSelQues',dummyarray).then(function(response){
+			console.log(response.data);
+			$scope.fixedQuestionList = response.data;
+			$scope.questionList=response.data;
+			if($scope.questionList.length==0)
+				{
+				 $scope.tableshow=false;
+				 $scope.TableMsq="NO DATA";
+				 return;
+				}
+			$scope.globalselect=false;
+			$scope.questionList.forEach(function(qa)
+					{
+				      qa.selected=false;
+					})
+			/*$scope.currentPage=1;
+			 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
+			    , end = begin + $scope.numPerPage;
+			    
+			    $scope.questionList = $scope.fixedQuestionList.slice(begin, end);
+			    $scope.lengthOfQA=$scope.fixedQuestionList.length;*/
+		},function(error){
+			console.log(error);
+		});
+		
+			}
+		
+		
+	}
+	
+
 	
 	$scope.searchCompany=function(QAObject)
 	{ 
@@ -314,10 +389,53 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 		
 	}
 	
+	$scope.deleteQuestion=function(QAObject)
+	{
+		console.log(QAObject);
+		delete QAObject.selected;
+		
+		$http.post('/QAProject/rest/deleteQuestion',QAObject).then(function(response){
+			
+			console.log(response.data);
+			$scope.fixedQuestionList = response.data;
+			$scope.questionList=response.data;
+			
+			if($scope.questionList.length==0)
+			{
+				 $scope.TableMsq="NO DATA";
+			      $scope.tableshow=false;
+			      return;
+			}
+			
+			$scope.questionList.forEach(function(qa)
+					{
+				      qa.selected=false;
+					})
+			console.log($scope.questionList);
+			
+		},function(error){
+			$scope.errorMultiflag=true;
+			$scope.errorMultiMsg="You are not authurized to delete the record."
+		});
+	}
+	
 	
 	$http.get('/QAProject/rest/getQuestions').then(function(response){
 		$scope.fixedQuestionList = response.data;
 		$scope.questionList=response.data;
+		
+		if($scope.questionList.length==0)
+		{
+			 $scope.TableMsq="NO DATA";
+		      $scope.tableshow=false;
+		      return;
+		}
+		
+		$scope.questionList.forEach(function(qa)
+				{
+			      qa.selected=false;
+				})
+		console.log($scope.questionList);
 		
 		
 		 
@@ -411,6 +529,11 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 				console.log(response.data);
 				$scope.fixedQuestionList = response.data;
 				$scope.questionList=response.data;
+				$scope.tableshow=true;
+				$scope.questionList.forEach(function(qa)
+						{
+					      qa.selected=false;
+						})
 				/*$scope.currentPage=1;
 				 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
 				    , end = begin + $scope.numPerPage;
@@ -540,10 +663,23 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 			  defer.resolve({count:$scope.count,iValue:iValue,error:""});
 			});*/
 		
+		object.question.trim();
+		object.company.trim();
+		object.skill.trim();
+		object.subskill.trim();
+		object.location.trim();
+		
+		
 		$http.post('/QAProject/rest/addQuestion',object).then(function(response){
 			console.log(response.data);
 			 $scope.count=$scope.count+1;
 			 $scope.questionList=response.data;
+			 $scope.tableshow=true;
+			 $scope.questionList.forEach(function(qa)
+						{
+					      qa.selected=false;
+						})
+			 
 			 defer.resolve({count:$scope.count,iValue:iValue,error:""});
 		},function(error){
 			console.log(error);
@@ -633,7 +769,7 @@ app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location','$win
 	 $scope.signuperror=true;
 	    $scope.signupsuccess=false;
 	    
-	    $scope.roleList=[{role:"ROLE_USER",check:true},{role:"ROLE_ADMIN",check:false}];
+	    $scope.roleList=[{role:"ROLE_USER",check:false,disabled:false},{role:"ROLE_ADMIN",check:false,disabled:true}];
 	
 	$scope.createAccount=function()
 	{
@@ -651,40 +787,49 @@ app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location','$win
 		    $scope.signuperror=false;
 		    $scope.signupsuccess=false;
 		  });*/
+
 		var userProfiles=[];
-		for(i in $scope.roleList)
-			{
-			 if(i.check)
-				 {
-				 userProfiles.push(i.role);
-				 }
-			}
+		
+		$scope.roleList.forEach(function(role){
+			if(role.check)
+				{
+				 userProfiles.push({"role":role.role});
+				}
+		});
+		
 		if(userProfiles.length==0)
 			{
-			userProfiles.push("ROLE_USER");
+			userProfiles.push({role:"ROLE_USER"});
 			}
 		$scope.user.userProfiles=userProfiles;
 		$scope.user.enabled=1;
+		
+		if($scope.user.username==undefined ||$scope.user.username=="")
+			{
+			$scope.message="UserName is required"
+			 $scope.signuperror=true;
+			return;
+			}
+		
+		if($scope.user.password==undefined ||$scope.user.password=="")
+		{
+		$scope.message="password is required"
+		 $scope.signuperror=true;
+		return;
+		}
+	
+		
 		$http.post('/QAProject/rest/addUser',$scope.user).then(function(response){
 			
-			console.log(response.data);
-			var userInfo = response.data;
-			 $window.sessionStorage.setItem("userDetails",JSON.stringify(response.data));
-			var check = userInfo.hasOwnProperty('status')?false:userInfo.authenticated;
-			if(check)
+			if(response.data=="Added")
 				{
-				 $location.url('/QAView');
+				 $scope.message="Added new user "+$scope.user.username;
+				 $scope.signupsuccess=true;
+				 
 				}
-			else{
-				$scope.message="UserName and Password is Wrong";
-				$scope.signinerror=false;
-			}
 		},function(error){
-			if(error.status==401)
-				{
-				$scope.message="UserName and Password is Wrong";
-				$scope.signinerror=false;
-				}
+			$scope.message="New user"+$scope.user.username+"not added.Please try again";
+			 $scope.signuperror=true;
 		});
 		
 		
@@ -728,7 +873,19 @@ app.controller('LoginCntrl',['$scope','$http','$location','$firebaseAuth','$wind
 		
 			console.log(response.data);
 			var userInfo = response.data;
+			var deletePerm;
+			userInfo.authorities.forEach(function(authority){
+				if(authority.authority=="ROLE_ADMIN")
+					{
+					 deletePerm =true;
+					}
+			})
+			if(deletePerm==undefined)
+				{
+				deletePerm=false;
+				}
 			 $window.sessionStorage.setItem("userDetails",JSON.stringify(response.data));
+			 $window.sessionStorage.setItem("deletePerm",JSON.stringify(deletePerm));
 			var check = userInfo.hasOwnProperty('status')?false:userInfo.authenticated;
 			if(check)
 				{

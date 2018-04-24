@@ -38,5 +38,21 @@ public class QAServiceImpl implements QAService {
 		qaDao.addUser(user);
 		
 	}
+    
+	@Transactional
+	public void deleteQuestion(QA q) {
+		
+		qaDao.deleteQuestion(q);
+	}
+	
+	@Transactional
+	public void muldel(List<QA> q) {
+		
+		for(int i=0;i<q.size();i++)
+		{
+			qaDao.deleteQuestion(q.get(i));
+		}
+		
+	}
 
 }

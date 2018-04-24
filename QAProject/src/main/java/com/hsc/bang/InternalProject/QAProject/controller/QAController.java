@@ -41,13 +41,40 @@ public class QAController {
 		
 	}
 	
+@RequestMapping(value="/deleteQuestion",method = RequestMethod.POST)
+	
+	public @ResponseBody List<QA> deleteQuestion(@RequestBody QA q)
+	{
+	    System.out.println("Delete method");
+	     QAService.deleteQuestion(q);
+		List<QA> questions=QAService.getQuestions();
+		
+		return questions;
+		
+		
+	}
+
+@RequestMapping(value="/delSelQues",method = RequestMethod.POST)
+
+public @ResponseBody List<QA> deleteQuestion(@RequestBody List<QA> q)
+{
+    System.out.println("multi Delete method");
+    
+    QAService.muldel(q);
+	List<QA> questions=QAService.getQuestions();
+	
+	return questions;
+	
+	
+}
+	
 	@RequestMapping(value= "/login1",method = RequestMethod.POST)
 	
 	public @ResponseBody Principal user(Principal user) {
         return user;
     }
 	
-@RequestMapping(value= "/addUser",method = RequestMethod.POST)
+	@RequestMapping(value= "/addUser",method = RequestMethod.POST)
 	
 	public @ResponseBody String  addUser(@RequestBody Users user) {
 	
@@ -55,7 +82,7 @@ public class QAController {
 	
 	   System.out.println("entered into controller of USER");
 	    QAService.addUser(user);
-        return "Add User";
+        return "Added";
     }
 
 
@@ -90,17 +117,6 @@ public class QAController {
 		
 		
 	}
-	
-	 private String getPrincipal(){
-	        String userName = null;
-	        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	 
-	        if (principal instanceof UserDetails) {
-	            userName = ((UserDetails)principal).getUsername();
-	        } else {
-	            userName = principal.toString();
-	        }
-	        return userName;
-	    }
-	
 }
+	
+

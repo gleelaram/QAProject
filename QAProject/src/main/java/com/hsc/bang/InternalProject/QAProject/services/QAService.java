@@ -11,5 +11,7 @@ public interface  QAService {
 	public List<QA> getQuestions();
 	public List<String> addQuestions(QA q);
 	public void addUser(Users user);
+	public void deleteQuestion(QA q);
+	public void muldel(List<QA> q);
 
 }

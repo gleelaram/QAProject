@@ -11,6 +11,8 @@ public interface QADao
 	
 	public List<QA> getQuestion();
 	
+	public void deleteQuestion(QA q);
+	
 	public Users getUser(String username);
 	
 	public void addUser(Users user);
