@@ -534,6 +534,8 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 						{
 					      qa.selected=false;
 						})
+						
+						$scope.QAF={}
 				/*$scope.currentPage=1;
 				 var begin = (($scope.currentPage - 1) * $scope.numPerPage)
 				    , end = begin + $scope.numPerPage;
