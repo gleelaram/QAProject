@@ -59,6 +59,10 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 	var max = 0;
 	$scope.backsearch=false;
 	
+	$scope.changeToSignup=function(){
+		$location.path('/signup');
+	}
+	
 	
 	$scope.selectall=function()
 	{
@@ -379,8 +383,12 @@ app.controller('QAViewCntrl',['$scope','$http','$firebaseObject','$firebaseArray
 			$location.path('/');
 		});*/
 		$window.sessionStorage.clear();
-		$http.post('/QAProject/rest/j_spring_security_logout',object).then(function(response){
+		$http.post('/QAProject/rest/logout').then(function(response){
 			console.log(response.data);
+			if(response.status=='200')
+				{
+				 $location.path('/');
+				}
 		
 			
 		},function(error){
@@ -771,7 +779,8 @@ app.controller('signupCntrl',['$scope','$http','$firebaseAuth','$location','$win
 	 $scope.signuperror=true;
 	    $scope.signupsuccess=false;
 	    
-	    $scope.roleList=[{role:"ROLE_USER",check:false,disabled:false},{role:"ROLE_ADMIN",check:false,disabled:true}];
+	/*    $scope.roleList=[{role:"ROLE_USER",check:false,disabled:false},{role:"ROLE_ADMIN",check:false,disabled:true}];*/
+	    $scope.roleList=[{role:"ROLE_USER",check:false},{role:"ROLE_ADMIN",check:false}];
 	
 	$scope.createAccount=function()
 	{

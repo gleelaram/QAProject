@@ -1,3 +1,13 @@
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <div class="navbar-brand">IQAL Tool</div>
+    </div>
+     <div style="float:right;margin-top: 6px;">
+       <span style="color: #fff;">  {{firebaseUser.name}} |</span>  <button   class="btn btn-danger" ng-click="signOut()">Sign out</button> </div>
+  </div>
+</nav>
+
 <div class="alert alert-danger" ng-show="errorMultiflag">
  <button type="button" class="close" ng-click="errorclose()">&times;</button>
  <span>{{errorMultiMsg}}</span>
@@ -25,7 +35,7 @@
 <tbody>
 <tr ng-show="!tableshow"><td colspan="{{colspan}}" style="text-align: center"><p>{{TableMsq}}</p></td></tr>
 <tr ng-show="tableshow" dir-paginate="QAObject in questionList|itemsPerPage:numPerPage" current-page="currentPage">
-<td><input type="checkbox"   ng-model="QAObject.selected"></td>
+<td  ng-show="deletePermission"><input type="checkbox"   ng-model="QAObject.selected"></td>
 <td>{{numPerPage*(currentPage-1)+$index+1}}</td>
 <!-- <td>{{$index+1}}</td> -->
 <td >{{QAObject.question}}</td>
@@ -66,6 +76,7 @@
  <button  data-toggle="modal" data-target="#QAMModal" class='btn btn-primary' style="float: right;">Add MultipleQuestions</button> 
  <button  data-toggle="modal" data-target="#QAModal" class='btn btn-primary' style="float: right;margin-right: 8px;" ng-click="dummy()">Add Question</button>
  <button  class='btn btn-danger' style="float: right;margin-right: 8px;" ng-show="deletePermission"  ng-click="deleteSelected()">Delete MultipleQuestions </button>
+ <button  class='btn btn btn-success' style="float: right;margin-right: 8px;" ng-show="deletePermission"  ng-click="changeToSignup()">create user</button>
  
 <!--  <a style="float: right;" ng-show="backsearch" ng-click="back()">back</a> -->
  <button class='btn btn-primary' style="float: right;margin-right: 8px;" ng-show="backsearch" ng-click="back()">back</button>

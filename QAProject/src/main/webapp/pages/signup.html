@@ -55,10 +55,14 @@
         <label for="inputPassword" >PASSWORD:</label>
         <input type="password" id="inputPassword" class="form-control" ng-model='user.password' placeholder="Password" required="">
          <label for="inputRole">ROLE:</label>
-          <ul ng-repeat="role in roleList" >
+        <!--   <ul ng-repeat="role in roleList" >
    <input type="checkbox" ng-model="role.check"  ng-disabled={{role.disabled}}  value={{role.role}}>{{role.role}}
- </ul>
+ </ul> -->
+         
+          <ul ng-repeat="role in roleList" >
+  <li> <input type="checkbox" ng-model="role.check" value={{role.role}}>{{role.role}}</li>
+ </ul> 
          
         <button class="btn btn-lg btn-primary btn-block" type="submit" ng-click="createAccount(user)">CreateAccount</button>
-        <span><a href="#/">back</a></span>
+        <span><a href="#/QAView">back</a></span>
 </form>

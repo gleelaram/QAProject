@@ -6,12 +6,13 @@
       
 
       
-    <http auto-config="true">
+    <http auto-config="true" >
     
        <csrf disabled="true"/>
         <!-- <intercept-url pattern="/*"  access="permitAll" /> -->
         <intercept-url pattern="/rest/login1" access="hasRole('ROLE_USER')" />
           <intercept-url pattern="/rest/Access_Denied" access="permitAll" />
+          <intercept-url pattern="/rest/logout" access="permitAll" />
            <intercept-url pattern="/rest/addUser" access="hasRole('ROLE_ADMIN')" />
            
         <intercept-url pattern="/rest/getQuestions" access="hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')" />
@@ -27,12 +28,11 @@
            username-parameter="username"
            password-parameter="password" authentication-failure-url="/Access_Denied"  />
           <http-basic entry-point-ref="customBasicAuthenticationEntryPoint" />
-        <logout logout-url="/j_spring_security_logout" />
+       <!--  <logout logout-url="/rest/logout" invalidate-session="true" delete-cookies="true"/> -->
   
       <!--    <session-management invalid-session-url="/index.html" session-fixation-protection="newSession" >
 		   <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />
 		</session-management> -->
-       <logout/>   
     </http>
  <!--  <debug/> -->
   
